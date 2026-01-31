@@ -365,13 +365,13 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen flex flex-col text-neutral-900 selection:bg-black selection:text-white">
+    <div className="h-[100dvh] min-h-[100dvh] flex flex-col text-neutral-900 selection:bg-black selection:text-white overflow-hidden">
       
-      <main className="flex-1 w-full max-w-lg mx-auto flex flex-col relative min-h-0">
+      <main className="flex-1 w-full max-w-lg mx-auto flex flex-col relative min-h-0 h-full">
         
         {/* LANDING PAGE */}
         {view === 'landing' && (
-           <div className="relative flex-1 flex flex-col p-8 pt-12 animate-in fade-in duration-700 overflow-hidden">
+           <div className="relative flex-1 flex flex-col p-8 pt-12 animate-in fade-in duration-700 overflow-hidden justify-between">
              <div className="absolute inset-0 pointer-events-none">
                 <div 
                     className="shooting-star" 
@@ -389,21 +389,21 @@ const App: React.FC = () => {
 
             <div className="flex-1 flex flex-col items-center justify-center text-center z-10">
               
-              <div className="group relative w-96 h-80 mb-8 flex justify-center items-center">
+              <div className="group relative w-72 h-60 sm:w-96 sm:h-80 mb-6 sm:mb-8 flex justify-center items-center">
                   <img 
                       src="https://www.parium.org/_next/image?url=%2Fpyramid.jpeg&w=3840&q=75" 
                       alt="St. Louis Pyramid building"
-                      className="absolute w-48 h-64 object-cover rounded-xl border-4 border-white shadow-lg transform -translate-x-16 -rotate-12 transition-transform duration-500 ease-in-out group-hover:-translate-x-24 group-hover:-rotate-20 group-hover:-translate-y-2"
+                      className="absolute w-40 h-56 sm:w-48 sm:h-64 object-cover rounded-xl border-4 border-white shadow-lg transform -translate-x-12 sm:-translate-x-16 -rotate-12 transition-transform duration-500 ease-in-out group-hover:-translate-x-20 sm:group-hover:-translate-x-24 group-hover:-rotate-20 group-hover:-translate-y-2"
                   />
                   <img 
                       src="https://www.parium.org/_next/image?url=%2Fclayton.jpeg&w=3840&q=75" 
                       alt="Clayton, St. Louis"
-                      className="absolute w-48 h-64 object-cover rounded-xl border-4 border-white shadow-lg transform translate-x-16 rotate-12 transition-transform duration-500 ease-in-out group-hover:translate-x-24 group-hover:rotate-20 group-hover:-translate-y-2"
+                      className="absolute w-40 h-56 sm:w-48 sm:h-64 object-cover rounded-xl border-4 border-white shadow-lg transform translate-x-12 sm:translate-x-16 rotate-12 transition-transform duration-500 ease-in-out group-hover:translate-x-20 sm:group-hover:translate-x-24 group-hover:rotate-20 group-hover:-translate-y-2"
                   />
                   <img 
                       src="https://www.parium.org/_next/image?url=%2Fskyline.jpeg&w=3840&q=75" 
                       alt="St. Louis skyline"
-                      className="absolute w-48 h-64 object-cover rounded-xl border-4 border-white shadow-xl z-10 transition-transform duration-500 ease-in-out group-hover:scale-110 group-hover:translate-y-2"
+                      className="absolute w-40 h-56 sm:w-48 sm:h-64 object-cover rounded-xl border-4 border-white shadow-xl z-10 transition-transform duration-500 ease-in-out group-hover:scale-110 group-hover:translate-y-2"
                   />
               </div>
 
@@ -470,7 +470,7 @@ const App: React.FC = () => {
                   <input 
                     type="text" 
                     placeholder="Jane Doe"
-                    className="w-full bg-neutral-100 border border-transparent rounded-lg p-4 outline-none focus:border-black transition-all font-medium text-sm"
+                    className="w-full bg-neutral-100 border border-transparent rounded-lg p-4 outline-none focus:border-black transition-all font-medium text-base"
                     value={profile.name}
                     onChange={(e) => setProfile(p => ({ ...p, name: e.target.value }))}
                   />
@@ -480,7 +480,7 @@ const App: React.FC = () => {
                   <input 
                     type="number" 
                     placeholder="00"
-                    className="w-full bg-neutral-100 border border-transparent rounded-lg p-4 outline-none focus:border-black transition-all font-medium text-sm"
+                    className="w-full bg-neutral-100 border border-transparent rounded-lg p-4 outline-none focus:border-black transition-all font-medium text-base"
                     value={profile.age}
                     onChange={(e) => setProfile(p => ({ ...p, age: e.target.value }))}
                   />
