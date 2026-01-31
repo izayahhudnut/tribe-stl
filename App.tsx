@@ -7,6 +7,8 @@ import {
   X,
   History,
   ChevronRight,
+  Maximize2,
+  Send,
   MapPin,
   User,
   Instagram,
@@ -631,19 +633,11 @@ const App: React.FC = () => {
 
             {/* Tabs Section */}
             <div className="border-b border-neutral-200">
-              <div className="flex items-center justify-between">
-                <nav className="flex -mb-px space-x-6" aria-label="Tabs">
-                  <TabButton tab="places" label="Places" icon={<Star className="w-4 h-4" />} />
-                  <TabButton tab="chat" label="AI Chat" icon={<MessageCircle className="w-4 h-4" />} />
-                  <TabButton tab="people" label="People" icon={<Users className="w-4 h-4" />} />
-                </nav>
-                <button
-                  onClick={() => setIsFullScreen(true)}
-                  className="text-xs font-semibold tracking-widest uppercase text-neutral-500 hover:text-black transition-colors"
-                >
-                  Full Screen
-                </button>
-              </div>
+              <nav className="flex -mb-px space-x-6" aria-label="Tabs">
+                <TabButton tab="places" label="Places" icon={<Star className="w-4 h-4" />} />
+                <TabButton tab="chat" label="Guide" icon={<MessageCircle className="w-4 h-4" />} />
+                <TabButton tab="people" label="People" icon={<Users className="w-4 h-4" />} />
+              </nav>
             </div>
 
             {/* Tab Content */}
@@ -654,9 +648,10 @@ const App: React.FC = () => {
                     <div className="text-lg font-bold tracking-tight">Tribe STL</div>
                     <button
                       onClick={() => setIsFullScreen(false)}
-                      className="text-xs font-semibold tracking-widest uppercase text-neutral-500 hover:text-black transition-colors"
+                      aria-label="Close full screen"
+                      className="p-2 rounded-full bg-neutral-100 text-neutral-600 hover:text-black hover:bg-neutral-200 transition-colors"
                     >
-                      Close
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
                   <div className="flex-1 overflow-y-auto p-6">
@@ -827,9 +822,9 @@ const App: React.FC = () => {
                           <button
                             onClick={handleSendChat}
                             disabled={!chatInput.trim() || isChatLoading}
-                            className="px-4 py-3 rounded-full bg-black text-white text-sm font-semibold tracking-widest disabled:opacity-40"
+                            className="p-3 rounded-full bg-black text-white text-sm font-semibold tracking-widest disabled:opacity-40"
                           >
-                            <ChevronRight className="w-4 h-4" />
+                            <Send className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
@@ -841,18 +836,27 @@ const App: React.FC = () => {
                 <div className="min-h-0">
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-xs font-semibold text-neutral-400 tracking-widest uppercase">View</p>
-                    <div className="inline-flex rounded-full bg-neutral-100 p-1">
+                    <div className="flex items-center gap-3">
+                      <div className="inline-flex rounded-full bg-neutral-100 p-1">
+                        <button
+                          onClick={() => setPlacesView('list')}
+                          className={`px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full transition-colors ${placesView === 'list' ? 'bg-white text-black shadow-sm' : 'text-neutral-500 hover:text-black'}`}
+                        >
+                          List
+                        </button>
+                        <button
+                          onClick={() => setPlacesView('map')}
+                          className={`px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full transition-colors ${placesView === 'map' ? 'bg-white text-black shadow-sm' : 'text-neutral-500 hover:text-black'}`}
+                        >
+                          Map
+                        </button>
+                      </div>
                       <button
-                        onClick={() => setPlacesView('list')}
-                        className={`px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full transition-colors ${placesView === 'list' ? 'bg-white text-black shadow-sm' : 'text-neutral-500 hover:text-black'}`}
+                        onClick={() => setIsFullScreen(true)}
+                        aria-label="Full screen places"
+                        className="p-2 rounded-full bg-neutral-100 text-neutral-600 hover:text-black hover:bg-neutral-200 transition-colors"
                       >
-                        List
-                      </button>
-                      <button
-                        onClick={() => setPlacesView('map')}
-                        className={`px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-full transition-colors ${placesView === 'map' ? 'bg-white text-black shadow-sm' : 'text-neutral-500 hover:text-black'}`}
-                      >
-                        Map
+                        <Maximize2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -978,6 +982,16 @@ const App: React.FC = () => {
               )}
               {activeTab === 'chat' && (
                 <div className="flex flex-col h-full animate-in fade-in duration-500">
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-xs font-semibold text-neutral-400 tracking-widest uppercase">Guide</p>
+                    <button
+                      onClick={() => setIsFullScreen(true)}
+                      aria-label="Full screen guide"
+                      className="p-2 rounded-full bg-neutral-100 text-neutral-600 hover:text-black hover:bg-neutral-200 transition-colors"
+                    >
+                      <Maximize2 className="w-4 h-4" />
+                    </button>
+                  </div>
                   <div className="flex-1 space-y-3 overflow-y-auto pr-1">
                     {chatMessages.length === 0 ? (
                       <div className="text-center py-16 px-6 bg-neutral-50 rounded-xl border border-dashed border-neutral-200">
@@ -1016,14 +1030,14 @@ const App: React.FC = () => {
                         if (e.key === 'Enter') handleSendChat();
                       }}
                       placeholder="Ask about places, vibes, or plans..."
-                      className="flex-1 bg-neutral-100 border border-transparent rounded-full px-4 py-3 text-sm outline-none focus:border-black transition-all"
+                      className="flex-1 bg-neutral-100 border border-transparent rounded-full px-4 py-3 text-base outline-none focus:border-black transition-all"
                     />
                     <button
                       onClick={handleSendChat}
                       disabled={!chatInput.trim() || isChatLoading}
-                      className="px-4 py-3 rounded-full bg-black text-white text-sm font-semibold tracking-widest disabled:opacity-40"
+                      className="p-3 rounded-full bg-black text-white text-sm font-semibold tracking-widest disabled:opacity-40"
                     >
-                      Send
+                      <Send className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

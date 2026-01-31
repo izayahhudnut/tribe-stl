@@ -12,9 +12,13 @@ export const extractFrames = async (
     const context = canvas.getContext('2d');
     const frames: string[] = [];
 
-    video.src = URL.createObjectURL(file);
     video.muted = true;
-    video.play();
+    video.playsInline = true;
+    video.setAttribute('playsinline', 'true');
+    video.setAttribute('webkit-playsinline', 'true');
+    video.preload = 'auto';
+    video.src = URL.createObjectURL(file);
+    video.load();
 
     video.onloadedmetadata = async () => {
       const duration = video.duration;
