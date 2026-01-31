@@ -90,6 +90,7 @@ const App: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('places');
   const [placesView, setPlacesView] = useState<'list' | 'map'>('list');
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
@@ -116,7 +117,7 @@ const App: React.FC = () => {
       interval = window.setInterval(() => {
         const randomIndex = Math.floor(Math.random() * STL_NEIGHBORHOODS.length);
         setCurrentNeighborhood(STL_NEIGHBORHOODS[randomIndex]);
-      }, 1200);
+      }, 3000);
     }
     return () => clearInterval(interval);
   }, [processing.isProcessing]);
@@ -367,7 +368,7 @@ const App: React.FC = () => {
   return (
     <div className="h-[100dvh] min-h-[100dvh] flex flex-col text-neutral-900 selection:bg-black selection:text-white overflow-hidden">
       
-      <main className="flex-1 w-full max-w-lg mx-auto flex flex-col relative min-h-0 h-full">
+      <main className={`flex-1 w-full ${isFullScreen ? 'max-w-none px-0' : 'max-w-lg'} mx-auto flex flex-col relative min-h-0 h-full`}>
         
         {/* LANDING PAGE */}
         {view === 'landing' && (
@@ -573,11 +574,11 @@ const App: React.FC = () => {
 
               <div className="mt-2">
                 <div className="h-7 overflow-hidden">
-                  <p className="text-lg font-semibold text-neutral-900 tracking-wide">
+                  <p className="text-lg font-semibold text-neutral-900 tracking-wide transition-opacity duration-700 animate-in fade-in">
                     {currentNeighborhood.name}
                   </p>
                 </div>
-                <p className="mt-3 text-sm text-neutral-500 leading-relaxed">
+                <p className="mt-3 text-sm text-neutral-500 leading-relaxed transition-opacity duration-700 animate-in fade-in">
                   {currentNeighborhood.description || 'Exploring the city...'}
                 </p>
               </div>
@@ -630,15 +631,212 @@ const App: React.FC = () => {
 
             {/* Tabs Section */}
             <div className="border-b border-neutral-200">
-              <nav className="flex -mb-px space-x-6 justify-center" aria-label="Tabs">
-                <TabButton tab="places" label="Places" icon={<Star className="w-4 h-4" />} />
-                <TabButton tab="chat" label="AI Chat" icon={<MessageCircle className="w-4 h-4" />} />
-                <TabButton tab="people" label="People" icon={<Users className="w-4 h-4" />} />
-              </nav>
+              <div className="flex items-center justify-between">
+                <nav className="flex -mb-px space-x-6" aria-label="Tabs">
+                  <TabButton tab="places" label="Places" icon={<Star className="w-4 h-4" />} />
+                  <TabButton tab="chat" label="AI Chat" icon={<MessageCircle className="w-4 h-4" />} />
+                  <TabButton tab="people" label="People" icon={<Users className="w-4 h-4" />} />
+                </nav>
+                <button
+                  onClick={() => setIsFullScreen(true)}
+                  className="text-xs font-semibold tracking-widest uppercase text-neutral-500 hover:text-black transition-colors"
+                >
+                  Full Screen
+                </button>
+              </div>
             </div>
 
             {/* Tab Content */}
             <div className="flex-1 overflow-y-auto py-6 min-h-0">
+              {isFullScreen && (
+                <div className="fixed inset-0 z-50 bg-white flex flex-col">
+                  <div className="h-14 flex items-center justify-between px-6 border-b border-neutral-200">
+                    <div className="text-lg font-bold tracking-tight">Tribe STL</div>
+                    <button
+                      onClick={() => setIsFullScreen(false)}
+                      className="text-xs font-semibold tracking-widest uppercase text-neutral-500 hover:text-black transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-6">
+                    {activeTab === 'places' && (
+                      <div>
+                        {isGenerating ? (
+                          <div className="space-y-4">
+                            {[...Array(5)].map((_, i) => (
+                              <div key={i} className="bg-neutral-100 p-5 rounded-lg animate-pulse">
+                                <div className="h-5 w-1/2 bg-neutral-200 rounded-md mb-3"></div>
+                                <div className="h-4 w-full bg-neutral-200 rounded-md"></div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          placesView === 'list' ? (
+                            <div className="space-y-4 animate-in fade-in duration-500">
+                              {recommendations.map((rec, idx) => (
+                                <a 
+                                  key={idx} 
+                                  href={rec.url} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="group block bg-neutral-50 p-4 rounded-xl border border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300 transition-all"
+                                >
+                                  <div className="flex-1">
+                                    <h3 className="font-bold text-base tracking-tight">{rec.title}</h3>
+                                    <p className="text-neutral-500 text-sm mt-1 leading-relaxed">{rec.reason}</p>
+                                    <div className="flex flex-wrap gap-2 mt-3">
+                                      {rec.neighborhood.split(',').map(n => n.trim()).slice(0, 1).map(n => (
+                                        <span key={n} className="text-[10px] font-bold tracking-wider text-neutral-600 uppercase bg-neutral-200/60 px-2 py-1 rounded">{n}</span>
+                                      ))}
+                                      {rec.category.split(',').map(c => c.trim()).slice(0, 1).map(c => (
+                                        <span key={c} className="text-[10px] font-bold tracking-wider text-neutral-600 uppercase bg-neutral-200/60 px-2 py-1 rounded">{c}</span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </a>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="animate-in fade-in duration-500">
+                              <div className="h-[70vh] w-full overflow-hidden rounded-2xl border border-neutral-200">
+                                <MapContainer
+                                  center={[38.6270, -90.1994]}
+                                  zoom={12}
+                                  className="h-full w-full"
+                                  scrollWheelZoom
+                                >
+                                  <TileLayer
+                                    attribution='&copy; OpenStreetMap contributors'
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                  />
+                                  {recommendationMarkers.map(({ place, coords }) => (
+                                    <Marker key={place.title} position={[coords.lat, coords.lng]} icon={mapPinIcon}>
+                                      <Popup>
+                                        <div className="text-sm">
+                                          <div className="font-semibold">{place.title}</div>
+                                          <div className="text-neutral-600">{place.address}</div>
+                                        </div>
+                                      </Popup>
+                                    </Marker>
+                                  ))}
+                                </MapContainer>
+                              </div>
+                              {recommendationMarkers.length === 0 && (
+                                <p className="mt-4 text-xs text-neutral-500">No coordinates available for these places yet.</p>
+                              )}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    )}
+                    {activeTab === 'people' && (
+                      <div className="animate-in fade-in duration-500">
+                        {isGenerating ? (
+                        <div className="space-y-3">
+                            {[...Array(4)].map((_, i) => (
+                            <div key={i} className="flex items-center gap-4 p-3 bg-neutral-100 rounded-xl animate-pulse">
+                                <div className="w-12 h-12 bg-neutral-200 rounded-full"></div>
+                                <div className="flex-1 space-y-2">
+                                <div className="h-4 bg-neutral-200 rounded w-1/2"></div>
+                                <div className="h-3 bg-neutral-200 rounded w-1/4"></div>
+                                </div>
+                            </div>
+                            ))}
+                        </div>
+                        ) : matches.length > 0 ? (
+                        <div className="relative">
+                            <div className="space-y-3 filter blur-md pointer-events-none" aria-hidden="true">
+                            {matches.map((match) => (
+                                <div key={match.name} className="flex items-center gap-4 p-3 bg-neutral-50 rounded-xl border border-neutral-200">
+                                {match.photo ? (
+                                    <img src={match.photo} className="w-12 h-12 rounded-full object-cover" alt="Matched user" />
+                                ) : (
+                                    <div className="w-12 h-12 bg-neutral-200 rounded-full flex items-center justify-center">
+                                    <User className="w-6 h-6 text-neutral-400" />
+                                    </div>
+                                )}
+                                <div className="space-y-2">
+                                    <div className="h-4 bg-neutral-300 rounded w-32"></div>
+                                    <div className="h-3 bg-neutral-200 rounded w-20"></div>
+                                </div>
+                                </div>
+                            ))}
+                            </div>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm p-6 text-center rounded-xl">
+                            <h3 className="text-2xl font-bold tracking-tight mb-2">Unlock Your Tribe</h3>
+                            <p className="text-neutral-600 text-sm mb-6 max-w-xs mx-auto">Pay $5 to see the {matches.length} {matches.length === 1 ? 'person' : 'people'} you matched with.</p>
+                            <button className="bg-black text-white py-3 px-8 rounded-full font-semibold tracking-widest text-sm transition-all hover:bg-neutral-800 active:scale-95">
+                                Unlock for $5
+                            </button>
+                            </div>
+                        </div>
+                        ) : (
+                        <div className="text-center py-16 px-6 bg-neutral-50 rounded-xl border border-dashed border-neutral-200">
+                            <Users className="w-10 h-10 text-neutral-300 mx-auto mb-4" />
+                            <h3 className="text-xl font-bold tracking-tight mb-2">No Matches Yet</h3>
+                            <p className="text-neutral-500 text-sm tracking-wide leading-relaxed">
+                            We couldn't find anyone with a similar vibe yet. Check back later!
+                            </p>
+                        </div>
+                        )}
+                      </div>
+                    )}
+                    {activeTab === 'chat' && (
+                      <div className="flex flex-col h-full animate-in fade-in duration-500">
+                        <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+                          {chatMessages.length === 0 ? (
+                            <div className="text-center py-16 px-6 bg-neutral-50 rounded-xl border border-dashed border-neutral-200">
+                              <MessageCircle className="w-10 h-10 text-neutral-300 mx-auto mb-4" />
+                              <h3 className="text-xl font-bold tracking-tight mb-2">Ask the City Guide</h3>
+                              <p className="text-neutral-500 text-sm tracking-wide leading-relaxed">
+                                Ask for recommendations, date ideas, or neighborhood tips.
+                              </p>
+                            </div>
+                          ) : (
+                            chatMessages.map((msg, idx) => (
+                              <div
+                                key={idx}
+                                className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                                  msg.role === 'user'
+                                    ? 'ml-auto bg-black text-white'
+                                    : 'mr-auto bg-neutral-100 text-neutral-900'
+                                }`}
+                              >
+                                {msg.content}
+                              </div>
+                            ))
+                          )}
+                          {isChatLoading && (
+                            <div className="mr-auto bg-neutral-100 text-neutral-900 rounded-2xl px-4 py-3 text-sm">
+                              Thinking…
+                            </div>
+                          )}
+                        </div>
+                        <div className="mt-4 flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={chatInput}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleSendChat();
+                            }}
+                            placeholder="Ask about places, vibes, or plans..."
+                            className="flex-1 bg-neutral-100 border border-transparent rounded-full px-4 py-3 text-base outline-none focus:border-black transition-all"
+                          />
+                          <button
+                            onClick={handleSendChat}
+                            disabled={!chatInput.trim() || isChatLoading}
+                            className="px-4 py-3 rounded-full bg-black text-white text-sm font-semibold tracking-widest disabled:opacity-40"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               {activeTab === 'places' && (
                 <div className="min-h-0">
                   <div className="flex items-center justify-between mb-4">
