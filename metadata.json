@@ -1,0 +1,8 @@
+
+{
+  "name": "Tribe STL",
+  "description": "Find your community in Saint Louis by scanning map history or manually selecting your favorite spots.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
